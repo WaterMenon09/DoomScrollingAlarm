@@ -150,6 +150,10 @@ def build():
     subprocess.run(["codesign", "--force", "--deep", "--sign", "-", str(app_path)], check=True)
     print("Re-signed the app.")
 
+    # Remove quarantine attributes to prevent Gatekeeper cancel icon
+    subprocess.run(["xattr", "-cr", str(app_path)], check=True)
+    print("Removed quarantine attributes.")
+
     print(f"\nBuild complete!")
     print(f"App location: {app_path}")
     print(f"\nTo run: open dist/{APP_NAME}.app")
