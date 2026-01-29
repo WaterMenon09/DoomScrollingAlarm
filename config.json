@@ -1,0 +1,16 @@
+{
+  "threshold": 0.25,
+  "interval": 0.5,
+  "show_preview": true,
+  "ear_threshold": 0.2,
+
+  "paths": {
+    "models_dir": "models",
+    "model_file": "face_landmarker.task",
+    "alarm_video": "alarm/skeleton banging shield.mp4"
+  },
+
+  "urls": {
+    "model_download": "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task"
+  }
+}
