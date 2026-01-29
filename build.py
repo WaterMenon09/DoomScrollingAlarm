@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build script to create standalone macOS app using PyInstaller."""
 
+import os
 import plistlib
 import shutil
 import subprocess
@@ -9,6 +10,8 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).parent
 APP_NAME = "DoomScrollingAlarm"
+# Minimum macOS version to support (11.0 = Big Sur)
+MIN_MACOS_VERSION = "11.0"
 
 
 def create_icns_from_png(png_path: Path, icns_path: Path):
@@ -64,6 +67,7 @@ def update_info_plist():
     plist["CFBundleName"] = APP_NAME
     plist["CFBundleDisplayName"] = "Doom Scrolling Alarm"
     plist["CFBundleShortVersionString"] = "1.0.0"
+    plist["LSMinimumSystemVersion"] = MIN_MACOS_VERSION
 
     with open(plist_path, "wb") as f:
         plistlib.dump(plist, f)
@@ -94,7 +98,11 @@ def build():
     )
     mediapipe_path = result.stdout.strip()
 
-    print("Building macOS app...")
+    print(f"Building macOS app (targeting macOS {MIN_MACOS_VERSION}+)...")
+
+    # Set deployment target for older macOS compatibility
+    env = os.environ.copy()
+    env["MACOSX_DEPLOYMENT_TARGET"] = MIN_MACOS_VERSION
 
     cmd = [
         "pyinstaller",
@@ -132,7 +140,7 @@ def build():
         "main.py"
     ])
 
-    subprocess.run(cmd, cwd=BASE_DIR, check=True)
+    subprocess.run(cmd, cwd=BASE_DIR, env=env, check=True)
 
     # Add camera permission to Info.plist
     update_info_plist()
